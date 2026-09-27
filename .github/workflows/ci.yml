@@ -14,8 +14,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-         with:
+        with:
           ref: ${{ github.head_ref }}
+
       - name: Añadir feature al README
         run: |
           echo "Añadida feature: ${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}" >> README.md
