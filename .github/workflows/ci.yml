@@ -1,5 +1,8 @@
 name: CI
 
+permissions:
+  contents: write
+
 on:
   pull_request:
     types: [opened, synchronize, reopened]
@@ -15,19 +18,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref }}
+          ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Añadir feature al README
         run: |
           echo "Añadida feature: ${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}" >> README.md
 
       - name: Guardar cambios
+        env:
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add README.md
           git diff --cached --quiet || git commit -m "ci: actualizar README"
-          git push
+          git push origin HEAD:$BRANCH_NAME
 
   validar-dev-token:
     runs-on: self-hosted
@@ -39,13 +44,14 @@ jobs:
         env:
           DEV_TOKEN: ${{ secrets.DEV_TOKEN }}
         run: |
-          if ($env:DEV_TOKEN -eq [Environment]::GetEnvironmentVariable("DEV_TOKEN", "Machine")) {
-            Write-Host "Los tokens coinciden"
+          $local = [Environment]::GetEnvironmentVariable("DEV_TOKEN","Machine")
+          if (-not $local) {
+            $local = [Environment]::GetEnvironmentVariable("DEV_TOKEN","User")
           }
-          elseif ($env:DEV_TOKEN -eq [Environment]::GetEnvironmentVariable("DEV_TOKEN", "User")) {
+
+          if ($env:DEV_TOKEN -eq $local) {
             Write-Host "Los tokens coinciden"
-          }
-          else {
+          } else {
             Write-Host "Los tokens NO coinciden"
             exit 1
           }
