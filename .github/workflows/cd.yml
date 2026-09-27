@@ -1,5 +1,8 @@
 name: CD
 
+permissions:
+  contents: write
+
 on:
   pull_request:
     types: [opened, synchronize, reopened]
@@ -14,40 +17,42 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Incrementar versión en README
         run: |
           python - <<'PY'
           from pathlib import Path
           from datetime import datetime
-
-          path = Path("README.md")
-          text = path.read_text(encoding="utf-8")
-
           import re
 
-          match = re.search(r"AppVersion-(\d+)", text)
+          path = Path("README.md")
+          text = path.read_text(encoding="utf-8") if path.exists() else ""
 
-          if match:
-              version = int(match.group(1)) + 1
-              text = text[:match.start()] + f"AppVersion-{version}" + text[match.end():]
+          m = re.search(r"AppVersion-(\d+)", text)
+
+          if m:
+              version = int(m.group(1)) + 1
+              text = text[:m.start()] + f"AppVersion-{version}" + text[m.end():]
           else:
               version = 1
               text += f"\nAppVersion-{version}"
 
-          now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-          text += f"\nFecha actualización: {now}"
+          text += f"\nFecha actualización: {datetime.now():%d/%m/%Y %H:%M:%S}"
 
           path.write_text(text, encoding="utf-8")
           PY
 
       - name: Guardar cambios
+        env:
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add README.md
           git diff --cached --quiet || git commit -m "cd: incrementar versión"
-          git push
+          git push origin HEAD:$BRANCH_NAME
 
   validar-prod-token:
     runs-on: self-hosted
@@ -59,13 +64,14 @@ jobs:
         env:
           PROD_TOKEN: ${{ secrets.PROD_TOKEN }}
         run: |
-          if ($env:PROD_TOKEN -eq [Environment]::GetEnvironmentVariable("PROD_TOKEN", "Machine")) {
-            Write-Host "Los tokens coinciden"
+          $local = [Environment]::GetEnvironmentVariable("PROD_TOKEN","Machine")
+          if (-not $local) {
+            $local = [Environment]::GetEnvironmentVariable("PROD_TOKEN","User")
           }
-          elseif ($env:PROD_TOKEN -eq [Environment]::GetEnvironmentVariable("PROD_TOKEN", "User")) {
+
+          if ($env:PROD_TOKEN -eq $local) {
             Write-Host "Los tokens coinciden"
-          }
-          else {
+          } else {
             Write-Host "Los tokens NO coinciden"
             exit 1
           }
