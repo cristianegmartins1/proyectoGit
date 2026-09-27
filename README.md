@@ -1,7 +1,7 @@
 Añadida feature: feature/workflows-ci-cd
 Añadida feature: feature/workflows-ci-cd
 
-AppVersion-6
+AppVersion-7
 Fecha actualización: 27/09/2026 20:52:02Añadida feature: feature/workflows-ci-cd
 Añadida feature: feature/workflows-ci-cd
 
@@ -11,3 +11,5 @@ Fecha actualización: 27/09/2026 21:01:08Añadida feature: feature/workflows-ci-
 
 Fecha actualización: 27/09/2026 21:08:36
 Fecha actualización: 27/09/2026 21:10:38Añadida feature: feature/workflows-ci-cd
+
+Fecha actualización: 27/09/2026 21:11:45
