@@ -7,4 +7,4 @@ Añadida feature: feature/workflows-ci-cd
 
 Fecha actualización: 27/09/2026 20:56:14
 Fecha actualización: 27/09/2026 21:00:15
-Fecha actualización: 27/09/2026 21:01:08
+Fecha actualización: 27/09/2026 21:01:08Añadida feature: feature/workflows-ci-cd
