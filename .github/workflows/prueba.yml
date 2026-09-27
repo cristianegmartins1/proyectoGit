@@ -19,4 +19,4 @@ jobs:
           else {
             Write-Host "Los tokens NO coinciden"
             exit 1
-          }
+          }# Prueba de token incorrecto
