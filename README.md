@@ -12,4 +12,4 @@ Fecha actualización: 27/09/2026 21:01:08Añadida feature: feature/workflows-ci-
 Fecha actualización: 27/09/2026 21:08:36
 Fecha actualización: 27/09/2026 21:10:38Añadida feature: feature/workflows-ci-cd
 
-Fecha actualización: 27/09/2026 21:11:45
+Fecha actualización: 27/09/2026 21:11:45Añadida feature: feature/workflows-ci-cd
