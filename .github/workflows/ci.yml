@@ -17,7 +17,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
         with:
           ref: ${{ github.head_ref || github.ref_name }}
 
@@ -31,7 +30,7 @@ jobs:
         run: |
           echo "Añadida feature: ${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}" >> README.md
 
-            - name: Guardar cambios
+      - name: Guardar cambios
         if: github.actor != 'github-actions[bot]'
         run: |
           git config user.name "github-actions[bot]"
@@ -39,7 +38,7 @@ jobs:
           git add README.md
           git diff --cached --quiet || git commit -m "ci: actualizar README"
           git push origin HEAD:${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}
-
+          
   validar-dev-token:
     runs-on: self-hosted
     needs: actualizar-readme
